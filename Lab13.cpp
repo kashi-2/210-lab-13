@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <array>
+#include <vector>
 #include <algorithm>
 #include <numeric>
 using namespace std;
@@ -11,18 +11,15 @@ const int DAYS_IN_MONTH = 30;
 
 //function proties
 
-bool loadTemperatures(array<int, DAYS_IN_MONTH> &temps);
-void displayTemperatures(const array<int, DAYS_IN_MONTH> &temps);
-void analyzeTemperatures(const array<int, DAYS_IN_MONTH> &temps);
+bool loadTemperatures(vector<int> &temps);
+void displayTemperatures(const vector<int> &temps);
+void analyzeTemperatures(const vector<int> &temps);
 
 //mainfun below
 
 int main()
 { 
-    array<int, DAYS_IN_MONTH> temperatures;
-
-    //filling array with zeroes using std:array::fill
-    temperatures.fill(0);
+    vector<int> temperatures;
 
     if (!loadTemperatures(temperatures))
     {
@@ -34,10 +31,10 @@ int main()
     analyzeTemperatures(temperatures);
     return 0;
 }
-// func definations aka loadTemperatures which will read temperature data from a file into std::array.
-//fills requirement to use: at(), size(), data()
+// func definations aka loadTemperatures, going to now read temp data from file into a vector.
+//have to show push_back(), size() in this assignment
 
-bool loadTemperatures(array<int, DAYS_IN_MONTH> &temps)
+bool loadTemperatures(vector<int> &temps)
 {
     ifstream inputFile("temperatures.txt");
 
@@ -46,24 +43,34 @@ bool loadTemperatures(array<int, DAYS_IN_MONTH> &temps)
         return false;
     }
 
-    for (size_t i = 0; i < temps.size(); i++)
+    int value = 0;
+
+    while (inputFile >> value)
     {
-        inputFile >> temps.at(i);
+        temps.push_back(value);
     }
+
     inputFile.close();
+
+    //validating expected # of elements
+    if (temps.size() != DAYS_IN_MONTH)
+    {
+        cout << "Warning: Expected " << DAYS_IN_MONTH << " values, but read " << temps.size() << endl;
+    }
+
     return true;
 } 
 //func: displayTemperatures where it will output all temperature values.
-//this will fill the requirement for front(), back(), empty()s
-void displayTemperatures(const array<int, DAYS_IN_MONTH> &temps)
-{
-    cout << "\nDaily Temperatures:\n";
+//this will fill the requirement for front(), back(), empty(), size()
 
+void displayTemperatures(const vector<int> &temps)
+{
     if (temps.empty())
     {
         cout << "No temperature data available.\n";
         return;
     } 
+    cout << "\nDaily Temperatures:\n";
 
     for (size_t i = 0; i < temps.size(); i++)
     {
@@ -75,9 +82,9 @@ void displayTemperatures(const array<int, DAYS_IN_MONTH> &temps)
 } 
 
 //creating func: analyzeTemperatures which will perform statistical analysis on the temperatures
-// this will basically cover the begin(), end(), max_element(), min_element()
+// this will basically cover begin(), end()
 
-void analyzeTemperatures(const array<int, DAYS_IN_MONTH> &temps)
+void analyzeTemperatures(const vector<int> &temps)
 {
     int maxTemp = *max_element(temps.begin(), temps.end());
     int minTemp = *min_element(temps.begin(), temps.end());
